@@ -12,6 +12,11 @@ namespace EstimasionSS
     {
         protected void Application_Start()
         {
+            AutoMapper.Mapper.Initialize(a =>
+            {
+                a.AddProfile<MappingConfiguration.PlayreMappingProfile>();
+            });
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
