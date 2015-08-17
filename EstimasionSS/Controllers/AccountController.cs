@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using EstimasionSS.Models;
+using EstimasionSS.DataContext;
 
 namespace EstimasionSS.Controllers
 {
@@ -57,6 +58,22 @@ namespace EstimasionSS.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            string userName;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                 userName = User.Identity.Name;
+            }
+            else
+            {
+                userName = "AnonymousUser";
+            }
+            AuditModel audit = new AuditModel(userName);
+            audit.ActionTaken = "User entered Account>Login";
+
+            AuditHelper.AddAudit(audit);
+
+
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -73,12 +90,29 @@ namespace EstimasionSS.Controllers
                 return View(model);
             }
 
+            string userName;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                userName = User.Identity.Name;
+            }
+            else
+            {
+                userName = "AnonymousUser";
+            }
+            AuditModel audit = new AuditModel(userName);
+
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    audit.ActionTaken = "User Logedin";
+
+                    AuditHelper.AddAudit(audit);
+
+
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -86,6 +120,11 @@ namespace EstimasionSS.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
+                    audit.ActionTaken = "Invalid login attempt. user name::" + model.Email;
+
+                    AuditHelper.AddAudit(audit);
+
+
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<EstimasionSS.Models.AuditModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PartitionKey)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Timestamp)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ActionTaken)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PartitionKey)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Timestamp)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ActionTaken)
+        </td>
+        <td>
+            <a title="" data-original-title="" href="" data-toggle="confirmation-popout" data-rowkey="@item.RowKey" data-placement="top">Delete</a>
+        </td>
+    </tr>
+}
+
+</table>
+
+@section scripts{
+    @Scripts.Render("~/bundles/confirmation")
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="confirmation-popout"]').click(function () {
+                $.post("@Url.Action("Delete","Audit")", { rowKey: $(this).data("rowkey") }, function (data) {
+                });
+                $(this).parent().parent().fadeOut();
+                alert('deleted');
+
+                
+            });
+
+            $('[data-toggle="confirmation-popout"]').popConfirm({
+                title: "Delete",
+                placement: 'left'
+            });
+
+            
+        });
+    </script>
+    }

@@ -7,6 +7,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNet.Identity;
+using Microsoft.WindowsAzure.Storage;
+using System.Configuration;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace EstimasionSS.Controllers
 {
@@ -20,6 +23,22 @@ namespace EstimasionSS.Controllers
 
             try
             {
+                // Create a new customer entity.
+                string userName;
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    userName = User.Identity.Name;
+                }
+                else
+                {
+                    userName = "AnonymousUser";
+                }
+                AuditModel audit = new AuditModel(userName);
+                audit.ActionTaken = "User entered Player>Index";
+
+                AuditHelper.AddAudit(audit);
+
                 var userId = User.Identity.GetUserId();
                 var players = AutoMapper.Mapper.Map<List<PlayerModel>>(repository.GetByUserId(userId));
                 return View(players);
