@@ -71,7 +71,21 @@ namespace EstimasionSS.Controllers
                 // TODO: Add insert logic here
                 PlayerRepository repository = new PlayerRepository();
                 model.UserId = User.Identity.GetUserId();
-                repository.Add(model);
+                var player = repository.Add(model);
+
+                if (Request.Files[0].ContentLength > 0)
+                {
+                    HttpPostedFileBase postedFile = Request.Files[0];
+                    string filename = player.Id + ".jpg";
+                    var blobHelper = new StorageHelper.BlobHelper();
+
+                    var container = blobHelper.GetContainer("playerspictures");
+
+                    blobHelper.UploadToContainer(postedFile, container, filename);
+
+                    return RedirectToAction("Index");
+                }
+
                 return RedirectToAction("Index");
             }
             catch(Exception ex)

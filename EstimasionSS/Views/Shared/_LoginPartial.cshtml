@@ -8,6 +8,7 @@
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <img width="20" height="20" src='@string.Format("https://estimationss.blob.core.windows.net/userpictures/{0}.jpg",User.Identity.GetUserId())' alt=" Alternate Text" />
                     @User.Identity.GetUserName() <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">

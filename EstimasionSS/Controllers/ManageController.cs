@@ -7,6 +7,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using EstimasionSS.Models;
+using Microsoft.AspNet.Identity;
+using System.IO;
 
 namespace EstimasionSS.Controllers
 {
@@ -32,9 +34,9 @@ namespace EstimasionSS.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -74,6 +76,30 @@ namespace EstimasionSS.Controllers
             };
             return View(model);
         }
+
+        [HttpPost]
+        public ActionResult Index()
+        {
+            if (Request.Files.Count > 0)
+            {
+
+                if (Request.Files[0].ContentLength > 0)
+                {
+                    HttpPostedFileBase postedFile = Request.Files[0];
+                    string filename = User.Identity.GetUserId() + ".jpg";
+                    var blobHelper = new StorageHelper.BlobHelper();
+
+                    var container = blobHelper.GetContainer("userpictures");
+
+                    blobHelper.UploadToContainer(postedFile, container, filename);
+
+                    return RedirectToAction("Index");
+                }
+            }
+            return RedirectToAction("Index");
+
+        }
+
 
         //
         // POST: /Manage/RemoveLogin
@@ -331,7 +357,7 @@ namespace EstimasionSS.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -382,6 +408,6 @@ namespace EstimasionSS.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }

@@ -14,7 +14,7 @@ namespace EstimasionSS.DataContext
         {
             entitiesDb = new Entities();
         }
-        public void Add(Models.PlayerModel player)
+        public Player Add(Models.PlayerModel player)
         {
             try
             {
@@ -22,6 +22,8 @@ namespace EstimasionSS.DataContext
 
                 entitiesDb.Players.Add(entity);
                 entitiesDb.SaveChanges();
+
+                return entity;
             }
             catch (Exception)
             {

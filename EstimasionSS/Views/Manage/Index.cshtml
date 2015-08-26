@@ -1,4 +1,5 @@
 ﻿@model EstimasionSS.Models.IndexViewModel
+@using Microsoft.AspNet.Identity
 @{
     ViewBag.Title = "Manage";
 }
@@ -30,13 +31,13 @@
         </dd>
         @*
             Phone Numbers can used as a second factor of verification in a two-factor authentication system.
-             
+
              See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
                 for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-             
+
              Uncomment the following block after you have set up two-factor authentication
         *@
-        @*  
+        @*
             <dt>Phone Number:</dt>
             <dd>
                 @(Model.PhoneNumber ?? "None") [
@@ -80,5 +81,19 @@
                     }
                 }*@
         </dd>
+        <dt>
+            User Picture
+        </dt>
+        <dd>
+            <form id="imageuploadform" action="/Manage/Index" method="post" name="imageuploadform" enctype="multipart/form-data">
+
+                <img width="120" height="120"  src='@string.Format("https://estimationss.blob.core.windows.net/userpictures/{0}.jpg",User.Identity.GetUserId())' alt=" Alternate Text" />
+            <p>
+                <input type="file" name="userPicture" id="userPicture" value=" " />
+                <button type="submit"> Upload </button>
+            </p>
+            </form>
+        </dd>
+        
     </dl>
 </div>
